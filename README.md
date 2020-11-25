@@ -4,9 +4,10 @@
 
 Tool for Instagram
 
-<img src="/screenshot/screen_1.png" width="50%">
+<img src="/screenshot/screen_1.png" width="68%">
 
 </div>
+
 ## Usage
 
 ```
