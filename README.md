@@ -4,7 +4,7 @@
 
 Tool for Instagram
 
-<img src="/screenshot/screen_1.png" width="68%">
+<img src="/screenshot/screen_1.png" width="60%">
 
 </div>
 
