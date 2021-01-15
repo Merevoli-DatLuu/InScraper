@@ -102,10 +102,25 @@ def scraper(id, username=""):
     except:
         pass
 
-    linkStart = 'https://www.instagram.com/graphql/query/?query_hash=003056d32c2554def87228bc3fd9668a&variables={"id":"'+id+'","first":12,"after":""}'  
+    header = {
+        "accept": "*/*",
+        "accept-encoding": "gzip, deflate, br",
+        "accept-language": "en-US,en;q=0.9",
+        "cookie": 'ig_did=201CD758-3C2E-464B-BEE3-3A171D189F99; mid=XfnpKQAEAAFPnJGxXm4uNHvKE2UV; fbm_124024574287414=base_domain=.instagram.com; csrftoken=8svP6VBv8Rt2jKc8JFN5m0uCdzxuLeTc; ds_user_id=27949455512; sessionid=27949455512%3ABPkrtkF1q7Ow4v%3A22; shbid=6232; shbts=1610601542.4573383; rur=FTW; urlgen="{\"171.239.168.4\": 7552}:1l0J4f:fM_rkEy7pUjL9DCMivYdFUdDows"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36",
+        "x-csrftoken": "8svP6VBv8Rt2jKc8JFN5m0uCdzxuLeTc",
+        "x-ig-app-id": "936619743392459",
+        "x-ig-www-claim": "hmac.AR3V2lyYjhr1HaEfF78GZYRruFVzJsZ7LvejFjUBlKFtJXI0",
+        "x-requested-with": "XMLHttpRequest"
+    }
+    linkStart = 'https://www.instagram.com/graphql/query/?query_hash=003056d32c2554def87228bc3fd9668a&variables={"id":"'+id+'","first":12,"after":"QVFCSmJaTWxHbTZ0TzJCdGlnMGRIRmM5WjE0cTlfamlST1BaN2I5V3U4S3hMS3VJdGoxUzd0ZlBOdVBQM1F1WDRtaHJZZXc5WWYwbXZObHRKMGFxM3llUA=="}'
     print(linkStart)
     nextLink= ''
-    firstres = r.get(linkStart).json()
+    # print( r.get(linkStart))
+    firstres = r.get(linkStart, headers = header).json()
     check = firstres['data']['user']['edge_owner_to_timeline_media']['page_info']['has_next_page']
     end = firstres['data']['user']['edge_owner_to_timeline_media']['page_info']['end_cursor']
 
@@ -113,7 +128,7 @@ def scraper(id, username=""):
     link = []
     while check != False:
         nextLink = 'https://www.instagram.com/graphql/query/?query_hash=003056d32c2554def87228bc3fd9668a&variables={"id":"'+id+'","first":12,"after":"'+end+'"}'
-        res = r.get(nextLink).json()
+        res = r.get(nextLink, headers = header).json()
         edges = res['data']['user']['edge_owner_to_timeline_media']['edges']
         for e in edges:
             is_video = e['node']['is_video']
@@ -127,12 +142,13 @@ def scraper(id, username=""):
                         link.append(nee['node']['display_url'])
         end = res['data']['user']['edge_owner_to_timeline_media']['page_info']['end_cursor']
         check = res['data']['user']['edge_owner_to_timeline_media']['page_info']['has_next_page']
-        print(len(link))
-        total_files += len(link)
+        # print(len(link))
         for l in link:
             file_name = str(l).split('/')[-1].split('?')[0]
             with open(folder_name + '/' + file_name, "wb") as file:
                     response = r.get(l)
+                    total_files += 1
+                    print(total_files)
                     file.write(response.content)
                     file.close()
         link = []
